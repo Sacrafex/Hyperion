@@ -1,15 +1,42 @@
+<?php
+// Needs Revision to #27, basic outline added as a starting point.
+
+// Path to JSON file
+$dataFile = __DIR__ . "/scouting_data.json";
+
+// Load existing data or create new one if none exist
+if (file_exists($dataFile)) {
+    $scoutingData = json_decode(file_get_contents($dataFile), true);
+    if (!is_array($scoutingData)) {
+        $scoutingData = [];
+    }
+} else {
+    $scoutingData = [];
+}
+
+// Handle post request
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $entry = $_POST; // Collect values
+    $entry['timestamp'] = date('Y-m-d H:i:s');
+
+    $scoutingData[] = $entry;
+
+    file_put_contents($dataFile, json_encode($scoutingData, JSON_PRETTY_PRINT));
+    echo "<p>Data Saved</p>"; // Add professional submission page or reload page (could also reload after 5 seconds or something)
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>REEFSCAPE 2025 Scouting Form</title>
+  <title>REEFSCAPE 2025 Scouting Form</title> <!-- Eventually we can make the title depend on the season and run everything off of a match.json file -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
   <div class="container">
     <h1>REEFSCAPE 2025 Scouting</h1>
-    <h2>By Jason Sawiris</h2>
+    <h2>By Team 2839</h2>
     
     <form id="scoutForm">
       <fieldset>
@@ -182,13 +209,5 @@
       <button type="submit">Submit</button>
     </form>
   </div>
-
-  <script>
-    document.getElementById('scoutForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      // You can handle form data here (e.g. send to server, store, etc.)
-      alert("Form submitted!");
-    });
-  </script>
 </body>
 </html>
